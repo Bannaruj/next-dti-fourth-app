@@ -12,6 +12,14 @@ const BmrCalculatorPage: NextPage = () => {
   const [bmr, setBmr] = useState("");
   const [gender, setGender] = useState("");
 
+  const handlereset = () => {
+    setWeight("");
+    setHeight("");
+    setAge("");
+    setBmr("");
+    setGender("");
+  };
+
   const calculateBmr = () => {
     let result = 0;
     if (gender === "male") {
@@ -35,9 +43,7 @@ const BmrCalculatorPage: NextPage = () => {
       className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-4"
       style={{ fontFamily: "'Sarabun', sans-serif" }}
     >
-      {/* Card หลักสำหรับเครื่องคำนวณ */}
       <div className="w-full max-w-md bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-2xl shadow-blue-500/10 p-8 space-y-6">
-        {/* ส่วนหัวของการ์ด */}
         <div className="text-center">
           <Image
             src="/calculator.png"
@@ -52,9 +58,7 @@ const BmrCalculatorPage: NextPage = () => {
           <p className="text-gray-400 mt-1">คำนวณอัตราการเผาผลาญพลังงาน</p>
         </div>
 
-        {/* ฟอร์มสำหรับกรอกข้อมูล */}
         <div className="space-y-4">
-          {/* ช่องป้อนน้ำหนัก */}
           <div>
             <label
               htmlFor="weight"
@@ -72,7 +76,6 @@ const BmrCalculatorPage: NextPage = () => {
             />
           </div>
 
-          {/* ช่องป้อนส่วนสูง */}
           <div>
             <label
               htmlFor="height"
@@ -90,7 +93,6 @@ const BmrCalculatorPage: NextPage = () => {
             />
           </div>
 
-          {/* ช่องป้อนอายุ */}
           <div>
             <label
               htmlFor="age"
@@ -108,7 +110,6 @@ const BmrCalculatorPage: NextPage = () => {
             />
           </div>
 
-          {/* ตัวเลือกเพศ */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               เลือกเพศ
@@ -140,7 +141,6 @@ const BmrCalculatorPage: NextPage = () => {
           </div>
         </div>
 
-        {/* ปุ่มคำสั่ง */}
         <div className="flex flex-col sm:flex-row gap-4">
           <button
             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300"
@@ -148,12 +148,14 @@ const BmrCalculatorPage: NextPage = () => {
           >
             คำนวณ BMR
           </button>
-          <button className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">
+          <button
+            className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+            onClick={handlereset}
+          >
             รีเซ็ต
           </button>
         </div>
 
-        {/* ส่วนแสดงผลลัพธ์ */}
         <div className="text-center bg-gray-900/50 rounded-lg p-4">
           <p className="text-gray-400">ค่า BMR ที่คำนวณได้:</p>
           <p className="text-4xl font-bold text-blue-400">{bmr}</p>
