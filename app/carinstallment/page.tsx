@@ -3,17 +3,72 @@
 import type { NextPage } from "next";
 import Image from "next/image";
 import React from "react";
+import { useState } from "react";
 
 const CarInstallmentCalculatorPage: NextPage = () => {
+  // --- State Management ---
+  const [price, setPrice] = useState("");
+  const [downPayment, setDownPayment] = useState("25"); // กำหนดค่าเริ่มต้นสำหรับเงินดาวน์
+  const [interestRate, setInterestRate] = useState("");
+  const [term, setTerm] = useState("4"); // กำหนดค่าเริ่มต้นสำหรับระยะเวลาผ่อน
+  const [installment, setInstallment] = useState(0); // ใช้ 0 เป็นค่าเริ่มต้นสำหรับผลลัพธ์
+
+  // --- Calculation Logic ---
+  /**
+   * Method สำหรับคำนวณค่างวดรถ (Installment)
+   */
+  const handleCalculate = () => {
+    // แปลงค่าจาก String เป็นตัวเลข
+    const numPrice = parseFloat(price);
+    const numDownPayment = parseFloat(downPayment);
+    const numInterestRate = parseFloat(interestRate);
+    const numTerm = parseInt(term, 10);
+
+    // ตรวจสอบข้อมูลเบื้องต้น
+    if (
+      isNaN(numPrice) ||
+      isNaN(numInterestRate) ||
+      numPrice <= 0 ||
+      interestRate === ""
+    ) {
+      alert("กรุณากรอกราคารถและอัตราดอกเบี้ยให้ถูกต้อง");
+      return;
+    }
+
+    // คำนวณเงินดาวน์ (บาท)
+    const downPaymentAmount = numPrice * (numDownPayment / 100);
+    // คำนวณยอดจัดไฟแนนซ์
+    const loanPrincipal = numPrice - downPaymentAmount;
+    // คำนวณดอกเบี้ยทั้งหมด
+    const totalInterest = loanPrincipal * (numInterestRate / 100) * numTerm;
+    // คำนวณยอดหนี้ทั้งหมด
+    const totalLoanAmount = loanPrincipal + totalInterest;
+    // คำนวณจำนวนเดือนที่ผ่อน
+    const numberOfMonths = numTerm * 12;
+    // คำนวณค่างวดต่อเดือน
+    const monthlyInstallment = totalLoanAmount / numberOfMonths;
+
+    // อัปเดต State ของผลลัพธ์
+    setInstallment(parseFloat(monthlyInstallment.toFixed(2)));
+  };
+
+  /**
+   * Method สำหรับรีเซ็ตค่าทั้งหมด
+   */
+  const handleReset = () => {
+    setPrice("");
+    setDownPayment("25");
+    setInterestRate("");
+    setTerm("4");
+    setInstallment(0);
+  };
+
   return (
-    // Container หลัก: กำหนดพื้นหลังและจัดให้อยู่กึ่งกลาง
     <div
       className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-4"
       style={{ fontFamily: "'Sarabun', sans-serif" }}
     >
-      {/* Card หลักสำหรับเครื่องคำนวณ */}
       <div className="w-full max-w-md bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-2xl shadow-purple-500/10 p-8 space-y-6">
-        {/* ส่วนหัวของการ์ด */}
         <div className="text-center">
           <Image
             src="/calculator.png"
@@ -27,10 +82,7 @@ const CarInstallmentCalculatorPage: NextPage = () => {
           </h1>
           <p className="text-gray-400 mt-1">คำนวณค่างวดรถยนต์</p>
         </div>
-
-        {/* ฟอร์มสำหรับกรอกข้อมูล */}
         <div className="space-y-4">
-          {/* ราคารถยนต์ */}
           <div>
             <label
               htmlFor="car-price"
@@ -43,48 +95,55 @@ const CarInstallmentCalculatorPage: NextPage = () => {
               id="car-price"
               placeholder="เช่น 800000"
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
             />
           </div>
 
-          {/* เงินดาวน์ */}
           <div>
             <label
-              htmlFor="down-payment"
+              htmlFor="interest-rate-input"
               className="block text-sm font-medium text-gray-300 mb-2"
             >
-              เงินดาวน์ (%)
+              อัตราดอกเบี้ยต่อปี (%)
             </label>
             <input
               type="number"
-              id="down-payment"
-              placeholder="เช่น 25"
+              id="interest-rate-input"
+              placeholder="เช่น 5"
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+              value={interestRate}
+              onChange={(e) => setInterestRate(e.target.value)}
             />
           </div>
 
-          {/* อัตราดอกเบี้ย */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              อัตราดอกเบี้ยต่อปี (%)
+              เงินดาวน์ (%)
             </label>
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mt-2">
-              {["15", "20", "25", "30", "35"].map((rate) => (
+              {["15", "20", "25", "30", "35"].map((percent) => (
                 <label
-                  key={rate}
-                  className="flex items-center justify-center p-3 bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-600 text-center transition-colors has-[:checked]:bg-purple-500 has-[:checked]:text-white has-[:checked]:font-bold"
+                  key={percent}
+                  className={`flex items-center justify-center p-3 bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-600 text-center transition-colors ${
+                    downPayment === percent
+                      ? "bg-purple-500 text-white font-bold"
+                      : ""
+                  }`}
                 >
                   <input
                     type="radio"
-                    name="interest-rate"
-                    value={rate}
+                    name="down-payment"
+                    value={percent}
                     className="sr-only"
+                    checked={downPayment === percent}
+                    onChange={(e) => setDownPayment(e.target.value)}
                   />
-                  <span>{rate}%</span>
+                  <span>{percent}%</span>
                 </label>
               ))}
             </div>
           </div>
-
           {/* ระยะเวลาผ่อน */}
           <div>
             <label
@@ -96,6 +155,8 @@ const CarInstallmentCalculatorPage: NextPage = () => {
             <select
               id="loan-term"
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
             >
               <option value="1">1 ปี (12 งวด)</option>
               <option value="2">2 ปี (24 งวด)</option>
@@ -109,10 +170,16 @@ const CarInstallmentCalculatorPage: NextPage = () => {
 
         {/* ปุ่มคำสั่ง */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <button className="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">
+          <button
+            onClick={handleCalculate}
+            className="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+          >
             คำนวณค่างวด
           </button>
-          <button className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">
+          <button
+            onClick={handleReset}
+            className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+          >
             รีเซ็ต
           </button>
         </div>
@@ -120,7 +187,9 @@ const CarInstallmentCalculatorPage: NextPage = () => {
         {/* ส่วนแสดงผลลัพธ์ */}
         <div className="text-center bg-gray-900/50 rounded-lg p-4">
           <p className="text-gray-400">ค่างวดต่อเดือน:</p>
-          <p className="text-4xl font-bold text-purple-400">0.00</p>
+          <p className="text-4xl font-bold text-purple-400">
+            {installment > 0 ? installment.toLocaleString("en-US") : "0.00"}
+          </p>
         </div>
       </div>
     </div>
