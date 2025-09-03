@@ -7,25 +7,18 @@ import React from "react";
 import { useState } from "react";
 
 const CarInstallmentCalculatorPage: NextPage = () => {
-  // --- State Management ---
   const [price, setPrice] = useState("");
-  const [downPayment, setDownPayment] = useState("25"); // กำหนดค่าเริ่มต้นสำหรับเงินดาวน์
+  const [downPayment, setDownPayment] = useState("25");
   const [interestRate, setInterestRate] = useState("");
-  const [term, setTerm] = useState("4"); // กำหนดค่าเริ่มต้นสำหรับระยะเวลาผ่อน
-  const [installment, setInstallment] = useState(0); // ใช้ 0 เป็นค่าเริ่มต้นสำหรับผลลัพธ์
+  const [term, setTerm] = useState("4");
+  const [installment, setInstallment] = useState(0);
 
-  // --- Calculation Logic ---
-  /**
-   * Method สำหรับคำนวณค่างวดรถ (Installment)
-   */
   const handleCalculate = () => {
-    // แปลงค่าจาก String เป็นตัวเลข
     const numPrice = parseFloat(price);
     const numDownPayment = parseFloat(downPayment);
     const numInterestRate = parseFloat(interestRate);
     const numTerm = parseInt(term, 10);
 
-    // ตรวจสอบข้อมูลเบื้องต้น
     if (
       isNaN(numPrice) ||
       isNaN(numInterestRate) ||
@@ -36,26 +29,16 @@ const CarInstallmentCalculatorPage: NextPage = () => {
       return;
     }
 
-    // คำนวณเงินดาวน์ (บาท)
     const downPaymentAmount = numPrice * (numDownPayment / 100);
-    // คำนวณยอดจัดไฟแนนซ์
     const loanPrincipal = numPrice - downPaymentAmount;
-    // คำนวณดอกเบี้ยทั้งหมด
     const totalInterest = loanPrincipal * (numInterestRate / 100) * numTerm;
-    // คำนวณยอดหนี้ทั้งหมด
     const totalLoanAmount = loanPrincipal + totalInterest;
-    // คำนวณจำนวนเดือนที่ผ่อน
     const numberOfMonths = numTerm * 12;
-    // คำนวณค่างวดต่อเดือน
     const monthlyInstallment = totalLoanAmount / numberOfMonths;
 
-    // อัปเดต State ของผลลัพธ์
     setInstallment(parseFloat(monthlyInstallment.toFixed(2)));
   };
 
-  /**
-   * Method สำหรับรีเซ็ตค่าทั้งหมด
-   */
   const handleReset = () => {
     setPrice("");
     setDownPayment("25");
@@ -145,7 +128,6 @@ const CarInstallmentCalculatorPage: NextPage = () => {
               ))}
             </div>
           </div>
-          {/* ระยะเวลาผ่อน */}
           <div>
             <label
               htmlFor="loan-term"
@@ -169,7 +151,6 @@ const CarInstallmentCalculatorPage: NextPage = () => {
           </div>
         </div>
 
-        {/* ปุ่มคำสั่ง */}
         <div className="flex flex-col sm:flex-row gap-4">
           <button
             onClick={handleCalculate}
@@ -185,7 +166,6 @@ const CarInstallmentCalculatorPage: NextPage = () => {
           </button>
         </div>
 
-        {/* ส่วนแสดงผลลัพธ์ */}
         <div className="text-center bg-gray-900/50 rounded-lg p-4">
           <p className="text-gray-400">ค่างวดต่อเดือน:</p>
           <p className="text-4xl font-bold text-purple-400">
