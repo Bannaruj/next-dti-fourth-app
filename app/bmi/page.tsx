@@ -2,6 +2,7 @@
 
 import type { NextPage } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { useState } from "react";
 
@@ -96,6 +97,11 @@ const BmiCalculatorPage: NextPage = () => {
           <p className="text-gray-400">ค่า BMI ที่คำนวณได้:</p>
           <p className="text-4xl font-bold text-cyan-400">{bmi}</p>
         </div>
+        <Link href="/">
+          <button className="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">
+            ย้อนกลับ
+          </button>
+        </Link>
       </div>
     </div>
   );

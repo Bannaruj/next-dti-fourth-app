@@ -2,6 +2,7 @@
 
 import type { NextPage } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { useState } from "react";
 
@@ -191,6 +192,11 @@ const CarInstallmentCalculatorPage: NextPage = () => {
             {installment > 0 ? installment.toLocaleString("en-US") : "0.00"}
           </p>
         </div>
+        <Link href="/">
+          <button className="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">
+            ย้อนกลับ
+          </button>
+        </Link>
       </div>
     </div>
   );
